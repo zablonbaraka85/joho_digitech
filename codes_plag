@@ -1,0 +1,29 @@
+import numpy as np
+from scipy import signal
+import mxcorr
+import time
+import matplotlib.pyplot as plt
+ 
+nx = 200; ny = 200;
+imgf = np.random.random((nx,ny,1))
+temf = imgf[:,:,0]
+stime = time.time()
+status, corrf = mxcorr.multilevelcrosscorrfftm(imgf,temf,nx,ny,
+1,nx,ny)
+etime = time.time()
+print "Elapsed time, fortran call :", etime-stime," sec";
+ 
+corrp = np.zeros((nx,ny));
+stime = time.time()
+corrp[:,:] = signal.correlate2d(imgf[:,:,0], temf, mode='same')
+etime = time.time()
+print "Elapsed time, python call :", etime-stime, " sec";
+corrp = corrp/(sum(sum(temf*2))*sum(sum(imgf2)))*0.50
+ 
+plt.subplot(2, 2, 1)
+plt.imshow(corrf[:,:,0], cmap='RdBu', interpolation='nearest')
+plt.colorbar()
+plt.subplot(2, 2, 2)
+plt.imshow(corrp[:,:], cmap='RdBu', interpolation='nearest')
+plt.title('Correlation results')
+plt.colorbar()
